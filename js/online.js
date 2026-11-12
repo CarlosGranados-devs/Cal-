@@ -42,7 +42,7 @@
     var t = ctl ? setTimeout(function () { ctl.abort(); }, 9000) : null;
     var headers = { apikey: cfg.supabaseKey, 'Content-Type': 'application/json' };
     if (String(cfg.supabaseKey).indexOf('eyJ') === 0) headers.Authorization = 'Bearer ' + cfg.supabaseKey;
-    return fetch(cfg.supabaseUrl.replace(/\/+$/, '') + '/rest/v1/rpc/' + name, {
+    return fetch(cfg.supabaseUrl.replace(/\/+$/, '').replace(/\/rest\/v1$/, '') + '/rest/v1/rpc/' + name, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(body || {}),
