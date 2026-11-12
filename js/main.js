@@ -28,7 +28,8 @@
     trophy: '<path d="M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 20h8"/>',
     on: '<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>',
     off: '<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6"/>',
-    close: '<path d="M6 6l12 12M18 6 6 18"/>'
+    close: '<path d="M6 6l12 12M18 6 6 18"/>',
+    shop: '<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>'
   };
 
   function icon(name) {
@@ -52,7 +53,10 @@
     { id: 'poke', name: 'Púas amistosas', desc: 'Toca a Nitro 25 veces', test: function (s) { return s.pokes >= 25; } },
     { id: 'owl', name: 'Búho nocturno', desc: 'Juega entre las 0:00 y las 5:00', test: function (s, x, ev) { var hr = new Date().getHours(); return ev === 'game' && hr < 5; } },
     { id: 'rings100', name: 'Cien anillos', desc: 'Junta 100 anillos', test: function (s) { return s.ringsTotal >= 100; } },
-    { id: 'rings500', name: 'Marea dorada', desc: 'Junta 500 anillos', test: function (s) { return s.ringsTotal >= 500; } }
+    { id: 'rings500', name: 'Marea dorada', desc: 'Junta 500 anillos', test: function (s) { return s.ringsTotal >= 500; } },
+    { id: 'skin1', name: 'Look nuevo', desc: 'Compra tu primera skin', test: function (s) { return s.owned.length >= 2; } },
+    { id: 'skin5', name: 'Armario lleno', desc: 'Ten 5 skins', test: function (s) { return s.owned.length >= 5; } },
+    { id: 'skinall', name: 'Coleccionista de looks', desc: 'Consigue todas las skins', test: function (s) { return s.owned.length >= C.skins.list.length; } }
   ];
 
   function checkBadges(ev) {
@@ -79,9 +83,11 @@
   };
 
   /* ------------------------------------------------------------------ modals */
+  var modalOnClose = null;
   function openModal(title, bodyEl, opts) {
     opts = opts || {};
     closeModal();
+    modalOnClose = opts.onClose || null;
     var m = h('div', { class: 'modal-back', id: 'modal' },
       h('div', { class: 'modal', role: 'dialog', 'aria-modal': 'true', 'aria-label': title },
         h('div', { class: 'modal-head' },
@@ -102,6 +108,9 @@
   function closeModal() {
     var m = document.getElementById('modal');
     if (m) m.parentNode.removeChild(m);
+    var cb = modalOnClose;
+    modalOnClose = null;
+    if (cb) cb();
   }
 
   /* ------------------------------------------------------------------ bubble */
@@ -181,6 +190,7 @@
     var header = h('header', { class: 'top' },
       h('a', { class: 'logo', href: '#/', 'aria-label': 'nitro' }, 'nitro', h('span', { class: 'logo-cur', text: '_' })),
       h('div', { class: 'top-actions' },
+        h('button', { class: 'icon-btn', 'aria-label': 'tienda de skins', html: icon('shop'), onclick: openShop }),
         h('button', { class: 'icon-btn', 'aria-label': 'perfil y logros', html: icon('trophy'), onclick: openProfile }),
         h('button', { class: 'icon-btn', id: 'mute', 'aria-label': 'sonido', html: icon(st.muted ? 'off' : 'on'), onclick: toggleMute })
       )
@@ -339,6 +349,68 @@
     } });
     body.appendChild(h('div', { class: 'g-row' }, snd, vib, rst));
     openModal('perfil', body);
+  }
+
+  /* -------------------------------------------------------------------- shop */
+  var RCLASS = { 'inicial': 'inicial', 'común': 'comun', 'raro': 'raro', 'épico': 'epico', 'legendario': 'legendario' };
+
+  function openShop() {
+    C.audio.play('click');
+    var body = h('div', { class: 'shop' });
+    var wallet = h('div', { class: 'shop-wallet' });
+    var grid = h('div', { class: 'shop-grid' });
+    body.appendChild(wallet);
+    body.appendChild(grid);
+    body.appendChild(h('p', { class: 'shop-note', text: 'todos los personajes son originales. gana anillos jugando y reclama el reto del día.' }));
+
+    function paint() {
+      var st = S.get();
+      wallet.innerHTML = '';
+      wallet.appendChild(h('span', { class: 'chip gold', text: '◎ ' + st.rings + ' anillos' }));
+      wallet.appendChild(h('span', { class: 'chip', text: st.owned.length + '/' + C.skins.list.length + ' skins' }));
+      grid.innerHTML = '';
+      C.skins.list.forEach(function (sk) {
+        var owned = S.owns(sk.id);
+        var on = st.skin === sk.id;
+        var afford = st.rings >= sk.price;
+        var action;
+        if (on) action = h('button', { class: 'g-btn', text: 'puesta', disabled: true });
+        else if (owned) action = h('button', { class: 'g-btn primary', text: 'ponerme', onclick: function () { equip(sk); } });
+        else action = h('button', { class: 'g-btn' + (afford ? ' primary' : ''), text: '◎ ' + sk.price, onclick: function () { buy(sk); } });
+        grid.appendChild(h('div', { class: 'skin r-' + RCLASS[C.skins.rarity(sk)] + (on ? ' on' : '') + (owned ? ' owned' : '') },
+          h('div', { class: 'skin-pic', html: C.mascot.html(1, 'idle', sk.id) }),
+          h('b', { class: 'skin-name', text: sk.name }),
+          h('span', { class: 'skin-tag', text: C.skins.rarity(sk) }),
+          h('span', { class: 'skin-desc', text: sk.blurb }),
+          action
+        ));
+      });
+    }
+
+    function buy(sk) {
+      var r = S.buySkin(sk.id);
+      if (r.ok) {
+        S.equipSkin(sk.id);
+        C.audio.play('level');
+        C.toast('¡' + sk.name + ' es tuya!', 'badge');
+        checkBadges('shop');
+      } else if (r.reason === 'poor') {
+        C.audio.play('lose');
+        C.toast('te faltan ' + r.need + ' anillos');
+      }
+      paint();
+    }
+
+    function equip(sk) {
+      if (S.equipSkin(sk.id)) {
+        C.audio.play('good');
+        C.toast('ahora juegas como ' + sk.name);
+      }
+      paint();
+    }
+
+    paint();
+    openModal('tienda', body, { onClose: function () { if (!current) renderHub(); } });
   }
 
   function askName() {

@@ -1,7 +1,7 @@
 /* Nitro service worker · cache-first para jugar sin conexión */
 'use strict';
 
-var VERSION = 'nitro-v1';
+var VERSION = 'nitro-v2';
 var CORE = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ var CORE = [
   './assets/icon-192.png',
   './assets/icon-512.png',
   './js/registry.js',
+  './js/skins.js',
   './js/store.js',
   './js/audio.js',
   './js/nitro.js',

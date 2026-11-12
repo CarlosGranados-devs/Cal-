@@ -18,6 +18,8 @@
       muted: false,
       vibrate: true,
       pokes: 0,
+      skin: 'nitro',
+      owned: ['nitro'],
       games: {},
       badges: {},
       daily: { date: '', id: '', done: false }
@@ -42,6 +44,10 @@
         if (!raw) raw = localStorage.getItem(LEGACY);
         data = Object.assign(fresh(), raw ? JSON.parse(raw) : {});
         if (!data.daily) data.daily = { date: '', id: '', done: false };
+        if (!Array.isArray(data.owned)) data.owned = [];
+        if (data.owned.indexOf('nitro') < 0) data.owned.unshift('nitro');
+        data.owned = data.owned.filter(function (id) { return C.skins.has(id); });
+        if (!C.skins.has(data.skin) || data.owned.indexOf(data.skin) < 0) data.skin = 'nitro';
         data.v = 2;
       } catch (e) {
         data = fresh();
@@ -115,6 +121,27 @@
       d.ringsTotal += n;
       this.save();
       return d.rings;
+    },
+    owns: function (id) {
+      return this.get().owned.indexOf(id) >= 0;
+    },
+    buySkin: function (id) {
+      var d = this.get();
+      if (!C.skins.has(id)) return { ok: false, reason: 'missing' };
+      if (this.owns(id)) return { ok: false, reason: 'owned' };
+      var price = C.skins.byId(id).price;
+      if (d.rings < price) return { ok: false, reason: 'poor', need: price - d.rings };
+      d.rings -= price;
+      d.owned.push(id);
+      this.save();
+      return { ok: true, rings: d.rings };
+    },
+    equipSkin: function (id) {
+      var d = this.get();
+      if (!C.skins.has(id) || !this.owns(id)) return false;
+      d.skin = id;
+      this.save();
+      return true;
     },
     dailyChallenge: function (list) {
       var d = this.get();

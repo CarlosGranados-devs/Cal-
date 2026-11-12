@@ -18,6 +18,7 @@ No hay build, ni instalación, ni servidor obligatorio.
 - **Reto del día**: un juego distinto cada día con bonus de +20 anillos.
 - **Progreso**: XP, niveles, rachas de días, récords por juego y 15 logros.
 - **Nitro**: mascota SVG con estados de ánimo, accesorios por nivel y diálogos.
+- **Tienda de skins**: gasta tus anillos en 16 skins originales (variantes de Nitro con colores y accesorios, más Mishi, Brinco, Bruma, Saltín y Bolt). El botón de la bolsa está en el menú principal.
 - **PWA**: manifest, iconos y service worker para instalarlo y jugar sin conexión.
 - **Audio generado** con Web Audio API, sin archivos externos.
 - **Responsive**: teclado, mouse, táctil, pad en pantalla y gestos.
@@ -77,7 +78,8 @@ css/style.css       tema, componentes y animaciones
 js/registry.js      API de juegos, helpers y utilidades
 js/store.js         guardado en localStorage, anillos, XP y reto diario
 js/audio.js         efectos de sonido sintetizados
-js/nitro.js         mascota SVG y diálogos
+js/skins.js         catálogo de skins (colores, accesorios, precios)
+js/nitro.js         mascota SVG (según la skin equipada) y diálogos
 js/main.js          hub, router, HUD, resultados y logros
 js/games/*.js       los 25 minijuegos
 manifest.json       configuración PWA
