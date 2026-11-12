@@ -29,7 +29,8 @@
     on: '<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>',
     off: '<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6"/>',
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
-    shop: '<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>'
+    shop: '<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+    rank: '<path d="M4 20v-8h5v8M9.5 20V5h5v15M15 20v-10h5v10"/>'
   };
 
   function icon(name) {
@@ -190,6 +191,7 @@
     var header = h('header', { class: 'top' },
       h('a', { class: 'logo', href: '#/', 'aria-label': 'nitro' }, 'nitro', h('span', { class: 'logo-cur', text: '_' })),
       h('div', { class: 'top-actions' },
+        C.online.configured() ? h('button', { class: 'icon-btn', 'aria-label': 'ranking global', html: icon('rank'), onclick: openRanking }) : null,
         h('button', { class: 'icon-btn', 'aria-label': 'tienda de skins', html: icon('shop'), onclick: openShop }),
         h('button', { class: 'icon-btn', 'aria-label': 'perfil y logros', html: icon('trophy'), onclick: openProfile }),
         h('button', { class: 'icon-btn', id: 'mute', 'aria-label': 'sonido', html: icon(st.muted ? 'off' : 'on'), onclick: toggleMute })
@@ -310,7 +312,7 @@
     body.appendChild(h('div', { class: 'prof-row' },
       h('label', { text: 'nombre' }),
       nameIn,
-      h('button', { class: 'g-btn', text: 'guardar', onclick: function () { S.set({ name: nameIn.value.trim().slice(0, 16) }); C.toast('guardado'); renderHub(); closeModal(); } })
+      h('button', { class: 'g-btn', text: 'guardar', onclick: function () { S.set({ name: nameIn.value.trim().slice(0, 16) }); C.online.submitProfile(); C.toast('guardado'); renderHub(); closeModal(); } })
     ));
 
     body.appendChild(h('div', { class: 'prof-stats' },
@@ -337,6 +339,7 @@
     var snd = h('button', { class: 'g-btn', text: 'sonido: ' + (st.muted ? 'no' : 'sí'), onclick: function () { toggleMute(); snd.textContent = 'sonido: ' + (S.get().muted ? 'no' : 'sí'); } });
     var rst = h('button', { class: 'g-btn danger', text: 'borrar todo', onclick: function () {
       if (rst.dataset.sure) {
+        if (C.online.active()) C.online.wipe();
         S.reset();
         closeModal();
         renderHub();
@@ -347,7 +350,20 @@
         setTimeout(function () { rst.dataset.sure = ''; rst.textContent = 'borrar todo'; }, 3000);
       }
     } });
-    body.appendChild(h('div', { class: 'g-row' }, snd, vib, rst));
+    var rk = null;
+    if (C.online.configured()) {
+      rk = h('button', { class: 'g-btn', text: 'ranking global: ' + (C.online.active() ? 'sí' : 'no'), onclick: function () {
+        if (C.online.active()) {
+          C.online.leave();
+          C.toast('saliste del ranking y se borraron tus datos');
+        } else {
+          C.online.join();
+          C.toast('entraste al ranking global');
+        }
+        rk.textContent = 'ranking global: ' + (C.online.active() ? 'sí' : 'no');
+      } });
+    }
+    body.appendChild(h('div', { class: 'g-row' }, snd, vib, rk, rst));
     openModal('perfil', body);
   }
 
@@ -413,6 +429,189 @@
     openModal('tienda', body, { onClose: function () { if (!current) renderHub(); } });
   }
 
+  /* ----------------------------------------------------------------- ranking */
+  function maybeAskOnline() {
+    var st = S.get();
+    if (!C.online.configured() || !st.name || st.online === true || st.online === false) return;
+    if (document.getElementById('modal')) return;
+    var choose = function (yes) {
+      closeModal();
+      if (yes) {
+        C.online.join();
+        C.toast('entraste al ranking global');
+      } else {
+        S.set({ online: false });
+      }
+      C.audio.play('click');
+    };
+    var body = h('div', { class: 'ask' },
+      h('div', { class: 'ask-mascot', html: C.mascot.html(1, 'wink') }),
+      h('p', { text: '¿quieres entrar al ranking global? solo se publica tu apodo, nivel, anillos y récords. puedes salirte cuando quieras desde el perfil y se borra todo.' }),
+      h('div', { class: 'g-row' },
+        h('button', { class: 'g-btn primary', text: 'sí, entrar', onclick: function () { choose(true); } }),
+        h('button', { class: 'g-btn', text: 'ahora no', onclick: function () { choose(false); } })
+      )
+    );
+    openModal('ranking global', body, { noClose: true });
+  }
+
+  function lbRow(i, name, val) {
+    return h('li', { class: 'lb-row' + (i < 3 ? ' top' + (i + 1) : '') },
+      h('span', { class: 'lb-pos', text: '#' + (i + 1) }),
+      h('span', { class: 'lb-name', text: name }),
+      h('span', { class: 'lb-val', text: val })
+    );
+  }
+
+  function openRanking() {
+    C.audio.play('click');
+    var tab = 'xp';
+    var token = 0;
+    var tabs = h('div', { class: 'rank-tabs' });
+    var list = h('ol', { class: 'lb-list' });
+    var me = h('p', { class: 'lb-note' });
+    var body = h('div', { class: 'rank' }, tabs, list, me);
+
+    function paintTabs() {
+      tabs.innerHTML = '';
+      [['xp', 'nivel'], ['rings', 'anillos']].forEach(function (t) {
+        tabs.appendChild(h('button', {
+          class: 'filter' + (tab === t[0] ? ' on' : ''),
+          text: t[1],
+          onclick: function () { tab = t[0]; C.audio.play('tick'); paintTabs(); load(); }
+        }));
+      });
+    }
+
+    function joinBtn() {
+      return h('button', { class: 'g-btn primary', text: 'entrar al ranking', onclick: function () {
+        C.online.join().then(function () { load(); });
+        C.toast('entraste al ranking global');
+        load();
+      } });
+    }
+
+    function load() {
+      var my = ++token;
+      list.innerHTML = '';
+      me.textContent = 'cargando…';
+      C.online.topPlayers(tab).then(function (rows) {
+        if (my !== token) return;
+        list.innerHTML = '';
+        rows.forEach(function (r, i) {
+          list.appendChild(lbRow(i, r.name, tab === 'xp' ? 'nivel ' + S.levelInfo(r.xp).level + ' · ' + r.xp + ' xp' : '◎ ' + r.rings_total));
+        });
+        me.textContent = rows.length ? '' : 'todavía no hay nadie. sé el primero.';
+        if (!C.online.active()) {
+          me.textContent = 'no apareces en el ranking.';
+          me.appendChild(joinBtn());
+          return;
+        }
+        C.online.myRank(tab).then(function (n) {
+          if (my === token && n) me.textContent = 'tu posición: #' + n + (tab === 'rings' ? ' · anillos ganados en total' : '');
+        }).catch(function () {});
+      }).catch(function () {
+        if (my === token) me.textContent = 'no se pudo cargar el ranking. revisa tu conexión.';
+      });
+    }
+
+    paintTabs();
+    load();
+    openModal('ranking global', body);
+  }
+
+  function makeLb(def) {
+    var host = null;
+    var mode = null;
+    var sel = null;
+    var modes = [];
+    var token = 0;
+    var chipsEl = h('div', { class: 'lb-modes' });
+    var listEl = h('ol', { class: 'lb-list' });
+    var noteEl = h('p', { class: 'lb-note' });
+    var el = h('aside', { class: 'lb', 'aria-label': 'ranking de ' + def.name },
+      h('div', { class: 'lb-head' },
+        h('b', { text: 'top · ' + def.name }),
+        h('button', { class: 'icon-btn', 'aria-label': 'cerrar ranking', html: icon('close'), onclick: function () { setOpen(false); } })
+      ),
+      chipsEl, listEl, noteEl
+    );
+
+    function isOpen() { return !!host && host.classList.contains('lb-open'); }
+    function setOpen(v) {
+      if (!host) return;
+      host.classList.toggle('lb-open', v);
+      if (v) refresh();
+    }
+
+    function show(r) {
+      if (r.info) return r.info;
+      return def.fmt ? def.fmt(r.score) : r.score + (def.unit ? ' ' + def.unit : '');
+    }
+
+    function paintModes() {
+      chipsEl.innerHTML = '';
+      if (modes.length < 2) return;
+      modes.forEach(function (m) {
+        chipsEl.appendChild(h('button', {
+          class: 'lb-chip' + (m.id === sel ? ' on' : ''),
+          text: m.label || 'único',
+          onclick: function () { sel = m.id; C.audio.play('tick'); paintModes(); loadList(++token); }
+        }));
+      });
+    }
+
+    function loadList(my) {
+      listEl.innerHTML = '';
+      noteEl.textContent = 'cargando…';
+      return C.online.topScores(def.id, sel).then(function (rows) {
+        if (my !== token) return;
+        listEl.innerHTML = '';
+        rows.forEach(function (r, i) { listEl.appendChild(lbRow(i, r.name, show(r))); });
+        noteEl.textContent = rows.length ? '' : 'nadie ha puntuado aquí todavía.';
+        if (!C.online.active()) {
+          noteEl.textContent = 'no apareces en el ranking.';
+          noteEl.appendChild(h('button', { class: 'g-btn primary', text: 'entrar', onclick: function () {
+            C.online.join().then(function () { refresh(); });
+            C.toast('entraste al ranking global');
+          } }));
+        }
+      });
+    }
+
+    function refresh() {
+      var my = ++token;
+      listEl.innerHTML = '';
+      noteEl.textContent = 'cargando…';
+      C.online.modes(def.id).then(function (rows) {
+        if (my !== token) return;
+        modes = rows.map(function (r) { return { id: r.mode_id, label: r.mode_label, n: r.n }; });
+        var cur = mode ? C.online.modeKey(mode.id) : null;
+        if (mode && !modes.some(function (m) { return m.id === cur; })) modes.unshift({ id: cur, label: mode.label, n: 0 });
+        if (sel == null || !modes.some(function (m) { return m.id === sel; })) sel = cur != null ? cur : (modes[0] ? modes[0].id : '');
+        paintModes();
+        return loadList(my);
+      }).catch(function () {
+        if (my === token) noteEl.textContent = 'no se pudo cargar el ranking. revisa tu conexión.';
+      });
+    }
+
+    return {
+      el: el,
+      bind: function (gscreen) {
+        host = gscreen;
+        if (window.innerWidth >= 900) setOpen(true);
+      },
+      toggle: function () { setOpen(!isOpen()); },
+      refresh: function () { if (isOpen()) refresh(); },
+      setMode: function (m) {
+        mode = m;
+        sel = C.online.modeKey(m.id);
+        if (isOpen()) refresh();
+      }
+    };
+  }
+
   function askName() {
     var inp = h('input', { class: 'g-input', type: 'text', maxlength: '16', placeholder: 'tu nombre', 'aria-label': 'tu nombre', autocomplete: 'off' });
     var go = function () {
@@ -420,6 +619,7 @@
       closeModal();
       C.audio.play('good');
       renderHub();
+      maybeAskOnline();
     };
     inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
     var body = h('div', { class: 'ask' },
@@ -579,6 +779,8 @@
             onclick: function () {
               C.audio.play('click');
               if (layer.parentNode) layer.parentNode.removeChild(layer);
+              ctx.mode = { id: String(op.id), label: String(op.label || op.id) };
+              if (ui.onMode) ui.onMode(ctx.mode);
               cb(op.id);
             }
           }, h('b', { text: op.label }), op.desc ? h('small', { text: op.desc }) : null));
@@ -605,6 +807,12 @@
         var baseRings = o.rings != null ? o.rings : (o.win ? 8 : 2);
         var earned = Math.max(0, Math.round(baseRings + (o.win ? 8 : 2) + (rec.isRecord && o.score != null && !rec.first ? 5 : 0) + dailyBonus));
         S.addRings(earned);
+        if (C.online.active()) {
+          C.online.submitProfile();
+          if (o.score != null && isFinite(o.score) && o.score > 0 && ((o.better || 'high') === 'high' || o.win)) {
+            C.online.submitScore(def.id, ctx.mode, o.score, o.scoreText).then(function () { if (ui.refreshLb) ui.refreshLb(); });
+          }
+        }
         var st = S.get();
         var x = S.stats();
         var newBadges = checkBadges('game');
@@ -671,19 +879,27 @@
     var stage = h('div', { class: 'stage' }, root);
     var best = bestText(def);
 
+    var lb = C.online.configured() ? makeLb(def) : null;
+
     var bar = h('header', { class: 'gbar' },
       h('button', { class: 'icon-btn', 'aria-label': 'volver al menú', html: icon('back'), onclick: goHub }),
       h('div', { class: 'gtitle' }, h('b', { text: def.name }), h('small', { text: best ? 'mejor ' + best : def.tag })),
       h('div', { class: 'top-actions' },
+        lb ? h('button', { class: 'icon-btn', 'aria-label': 'ranking del juego', html: icon('rank'), onclick: function () { C.audio.play('click'); lb.toggle(); } }) : null,
         def.how ? h('button', { class: 'icon-btn', 'aria-label': 'cómo se juega', html: icon('help'), onclick: function () { showHow(def); } }) : null,
         h('button', { class: 'icon-btn', 'aria-label': 'reiniciar', html: icon('restart'), onclick: function () { C.audio.play('click'); startGame(def); } }),
         h('button', { class: 'icon-btn', id: 'gmute', 'aria-label': 'sonido', html: icon(S.get().muted ? 'off' : 'on'), onclick: toggleMute })
       )
     );
     var hud = h('div', { class: 'hud' }, status, score);
-    $app.appendChild(h('div', { class: 'gscreen' }, bar, hud, stage));
+    var gscreen = h('div', { class: 'gscreen' }, bar, hud, stage);
+    $app.appendChild(gscreen);
+    if (lb) {
+      stage.appendChild(lb.el);
+      lb.bind(gscreen);
+    }
 
-    var ui = { root: root, stage: stage, status: status, score: score };
+    var ui = { root: root, stage: stage, status: status, score: score, onMode: lb ? lb.setMode : null, refreshLb: lb ? lb.refresh : null };
     var ctx = makeCtx(def, ui);
     current = { def: def, ctx: ctx, destroy: null };
     try {
@@ -748,6 +964,8 @@
     });
     route();
     if (!S.get().name) askName();
+    else maybeAskOnline();
+    C.online.start();
     checkBadges('boot');
     if ('serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.protocol + '//' + location.host)) {
       navigator.serviceWorker.register('sw.js').catch(function () {});

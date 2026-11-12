@@ -1,7 +1,7 @@
 /* Nitro service worker · cache-first para jugar sin conexión */
 'use strict';
 
-var VERSION = 'nitro-v2';
+var VERSION = 'nitro-v3';
 var CORE = [
   './',
   './index.html',
@@ -10,9 +10,11 @@ var CORE = [
   './assets/favicon.svg',
   './assets/icon-192.png',
   './assets/icon-512.png',
+  './js/config.js',
   './js/registry.js',
   './js/skins.js',
   './js/store.js',
+  './js/online.js',
   './js/audio.js',
   './js/nitro.js',
   './js/main.js',
@@ -69,6 +71,7 @@ self.addEventListener('activate', function (e) {
 self.addEventListener('fetch', function (e) {
   var req = e.request;
   if (req.method !== 'GET') return;
+  if (new URL(req.url).origin !== self.location.origin) return;
 
   if (req.mode === 'navigate') {
     e.respondWith(
