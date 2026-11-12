@@ -1633,3 +1633,156 @@ button {
   font-size: 11px;
   color: var(--dim);
 }
+
+/* ----------------------------------------------------------------- ranking */
+.rank-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.lb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lb-row {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.lb-pos {
+  color: var(--dim);
+  font-size: 11px;
+}
+
+.lb-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fg);
+}
+
+.lb-val {
+  color: var(--gold);
+  font-size: 11px;
+  text-align: right;
+}
+
+.lb-row.top1 {
+  border-color: var(--gold);
+}
+
+.lb-row.top1 .lb-pos {
+  color: var(--gold);
+}
+
+.lb-row.top2 {
+  border-color: #c9d8e8;
+}
+
+.lb-row.top3 {
+  border-color: #d99b54;
+}
+
+.lb-note {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: var(--dim);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.lb-note .g-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.lb {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  width: min(86%, 290px);
+  padding: 12px;
+  overflow: auto;
+  background: var(--panel);
+  border-left: 1px solid var(--red-dim);
+  box-shadow: -14px 0 34px -18px #000;
+  transform: translateX(105%);
+  transition: transform 0.22s;
+}
+
+.gscreen.lb-open .lb {
+  transform: none;
+}
+
+.lb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.lb-head b {
+  font-family: var(--pix);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--red);
+}
+
+.lb-head .icon-btn {
+  width: 34px;
+  height: 34px;
+  flex: none;
+}
+
+.lb-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.lb-chip {
+  font: inherit;
+  font-size: 11px;
+  padding: 3px 9px;
+  color: var(--dim);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  cursor: pointer;
+}
+
+.lb-chip.on {
+  color: var(--bg);
+  background: var(--red);
+  border-color: var(--red);
+}
+
+@media (min-width: 900px) {
+  .gscreen.lb-open .g-root,
+  .gscreen.lb-open .result {
+    right: 290px;
+  }
+
+  .lb {
+    width: 290px;
+  }
+}

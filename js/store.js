@@ -18,6 +18,8 @@
       muted: false,
       vibrate: true,
       pokes: 0,
+      pid: '',
+      online: null,
       skin: 'nitro',
       owned: ['nitro'],
       games: {},
@@ -172,7 +174,10 @@
       return { played: played, plays: plays, wins: wins };
     },
     reset: function () {
+      var keep = data || {};
       data = fresh();
+      data.pid = keep.pid || '';
+      data.online = keep.online == null ? null : keep.online;
       this.save();
     }
   };
