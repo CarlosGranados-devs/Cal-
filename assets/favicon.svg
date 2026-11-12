@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Nitro">
+  <rect width="64" height="64" rx="14" fill="#081426"/>
+  <path d="M22 26 2 13l9 21L0 39l13 6-7 15 17-12z" fill="#1b6fd6" stroke="#0b3d91" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M42 26 62 13l-9 21 11 5-13 6 7 15-17-12z" fill="#1b6fd6" stroke="#0b3d91" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="32" cy="33" r="19" fill="#2f9bff" stroke="#0b3d91" stroke-width="2.5"/>
+  <ellipse cx="32" cy="41" rx="12" ry="8" fill="#f7c98b" stroke="#d99b54" stroke-width="1.2"/>
+  <ellipse cx="25" cy="29" rx="6" ry="8.5" fill="#f7fbff" stroke="#071426" stroke-width="1.5"/>
+  <ellipse cx="39" cy="29" rx="6" ry="8.5" fill="#f7fbff" stroke="#071426" stroke-width="1.5"/>
+  <ellipse cx="26" cy="30" rx="2.4" ry="4" fill="#071426"/>
+  <ellipse cx="40" cy="30" rx="2.4" ry="4" fill="#071426"/>
+  <ellipse cx="32" cy="38" rx="3" ry="2.3" fill="#071426"/>
+  <path d="M28 44q4 3 8 0" stroke="#d99b54" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <circle cx="51" cy="51" r="6.5" fill="none" stroke="#ffcf33" stroke-width="3"/>
+</svg>

@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -25,37 +25,41 @@
     d: { key: 'd', max: 6, hint: true }
   };
 
-  // Calo pixel ghost. Digits = part id (1 vanishes first, 6 last), e = eyes.
-  var GHOST = [
-    '....6666....',
+  // Nitro pixel hedgehog. Digits = part id (1 vanishes first, 6 last).
+  // e = eye, p = pupil, m = muzzle, s = shoe.
+  var HEDGEHOG = [
+    '...6....6...',
+    '..666..666..',
     '..66666666..',
     '.6666666666.',
     '.66ee66ee66.',
-    '.66ee66ee66.',
+    '.66ep66ep66.',
+    '.66mmmmmm66.',
+    '.66mmmmmm66.',
     '.6666666666.',
     '.5555555555.',
     '.5555555555.',
     '.4444444444.',
-    '.4444444444.',
-    '.3333333333.',
-    '.3333333333.',
     '.22.22.22.2.',
-    '.11.11.11.1.'
+    '.ss.ss.ss.s.'
   ];
 
   var KEYROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 
   function injectCss() {
-    if (document.getElementById('calo-style-ahorcado')) return;
+    if (document.getElementById('nitro-style-ahorcado')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-ahorcado';
+    s.id = 'nitro-style-ahorcado';
     s.textContent =
       '.ah-ghost{width:112px;height:130px;flex:none}' +
       '.ah-ghost svg{width:100%;height:100%;display:block;shape-rendering:crispEdges;animation:ah-float 2.4s ease-in-out infinite}' +
-      '.ah-ghost rect{transition:opacity .45s,transform .45s;fill:var(--fg)}' +
-      '.ah-ghost rect.ah-eye{fill:var(--bg)}' +
+      '.ah-ghost rect{transition:opacity .45s,transform .45s;fill:#2f9bff}' +
+      '.ah-ghost rect.ah-eye{fill:#f7fbff}' +
+      '.ah-ghost rect.ah-pupil{fill:#071426}' +
+      '.ah-ghost rect.ah-muzzle{fill:#f7c98b}' +
+      '.ah-ghost rect.ah-shoe{fill:#e8323c}' +
       '.ah-ghost.ah-hurt svg{animation:ah-hurt .35s}' +
-      '.ah-ghost.ah-win rect{fill:var(--red)}' +
+      '.ah-ghost.ah-win rect{fill:var(--gold)}' +
       '.ah-word{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:100%}' +
       '.ah-l{display:grid;place-items:center;border-bottom:3px solid var(--line);font-family:var(--pix);color:var(--fg);height:34px}' +
       '.ah-l.on{border-color:var(--red);animation:pop .22s}' +
@@ -73,12 +77,18 @@
 
   function ghostSvg() {
     var r = '';
-    for (var y = 0; y < GHOST.length; y++) {
-      for (var x = 0; x < GHOST[y].length; x++) {
-        var ch = GHOST[y][x];
+    var meta = {
+      e: { p: 6, cls: 'ah-eye' },
+      p: { p: 6, cls: 'ah-pupil' },
+      m: { p: 5, cls: 'ah-muzzle' },
+      s: { p: 1, cls: 'ah-shoe' }
+    };
+    for (var y = 0; y < HEDGEHOG.length; y++) {
+      for (var x = 0; x < HEDGEHOG[y].length; x++) {
+        var ch = HEDGEHOG[y][x];
         if (ch === '.') continue;
-        var eye = ch === 'e';
-        r += '<rect x="' + x + '" y="' + y + '" width="1" height="1" data-p="' + (eye ? 6 : ch) + '"' + (eye ? ' class="ah-eye"' : '') + '/>';
+        var info = meta[ch] || { p: +ch, cls: '' };
+        r += '<rect x="' + x + '" y="' + y + '" width="1" height="1" data-p="' + info.p + '"' + (info.cls ? ' class="' + info.cls + '"' : '') + '/>';
       }
     }
     return '<svg viewBox="0 0 12 14" aria-hidden="true">' + r + '</svg>';
@@ -170,13 +180,13 @@
           }
         }
         ctx.mood('sad');
-        msg.textContent = 'calo se desvaneció...';
+        msg.textContent = 'nitro se desvaneció...';
       }
       ctx.after(1100, function () {
         if (win) {
-          ctx.finish({ win: true, score: score, scoreText: score + ' pts', title: '¡salvaste a calo!', msg: 'palabra: ' + word.toUpperCase() + ' · errores: ' + errors });
+          ctx.finish({ win: true, score: score, scoreText: score + ' pts', title: '¡salvaste a nitro!', msg: 'palabra: ' + word.toUpperCase() + ' · errores: ' + errors });
         } else {
-          ctx.finish({ win: false, title: 'calo se desvaneció', msg: 'la palabra era ' + word.toUpperCase() });
+          ctx.finish({ win: false, title: 'nitro se desvaneció', msg: 'la palabra era ' + word.toUpperCase() });
         }
       });
     }
@@ -239,12 +249,12 @@
   C.register({
     id: 'ahorcado',
     name: 'Ahorcado',
-    desc: 'Salva a Calo antes de que se desvanezca por completo.',
+    desc: 'Salva a Nitro antes de que se desvanezca por completo.',
     tag: 'palabras',
-    color: '#ff2c2c',
+    color: '#ff5a5f',
     unit: 'pts',
     icon: ['..####..', '.######.', '##.##.##', '########', '########', '########', '##.##.##', '#..#..#.'],
-    how: 'Adivina la palabra letra por letra.\nCada error borra un pedacito de Calo.\nTeclado en pantalla o el de tu compu. Menos errores = más puntos.',
+    how: 'Adivina la palabra letra por letra.\nCada error borra un pedacito de Nitro.\nTeclado en pantalla o el de tu compu. Menos errores = más puntos.',
     start: function (ctx) {
       ctx.choose(
         {

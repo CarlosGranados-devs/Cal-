@@ -1,14 +1,14 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
 
   var MODES = { '3': 3, '4': 4, '5': 5, '6': 6 };
 
   function injectStyle() {
-    if (document.getElementById('calo-style-hanoi')) return;
+    if (document.getElementById('nitro-style-hanoi')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-hanoi';
+    s.id = 'nitro-style-hanoi';
     s.textContent =
       '.hn-board{display:flex;gap:8px;width:100%;max-width:520px;}' +
       '.hn-tower{flex:1;position:relative;display:flex;flex-direction:column-reverse;align-items:center;justify-content:flex-start;gap:3px;' +
@@ -133,8 +133,8 @@
     id: 'hanoi',
     name: 'Hanói',
     desc: 'Pasa todos los discos a la torre 3 en el menor número de movimientos.',
-    tag: 'mente',
-    color: '#ff2c2c',
+    tag: 'estrategia',
+    color: '#ffcf33',
     unit: 'mov',
     icon: ['...##...', '..####..', '........', '.######.', '........', '########', '########', '........'],
     how: 'Mueve todos los discos de la torre 1 a la torre 3.\nSolo un disco a la vez, y nunca uno grande sobre uno pequeño.\nToca origen y destino, o usa las teclas 1, 2 y 3.',

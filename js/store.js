@@ -1,22 +1,26 @@
 (function () {
   'use strict';
-  var C = window.Calo;
-  var KEY = 'calo.v1';
+  var C = window.Nitro;
+  var KEY = 'nitro.v1';
+  var LEGACY = 'calo.v1';
   var data = null;
 
   function fresh() {
     return {
-      v: 1,
+      v: 2,
       name: '',
       visits: 0,
       days: [],
       streak: 0,
       xp: 0,
+      rings: 0,
+      ringsTotal: 0,
       muted: false,
       vibrate: true,
       pokes: 0,
       games: {},
-      badges: {}
+      badges: {},
+      daily: { date: '', id: '', done: false }
     };
   }
 
@@ -25,11 +29,20 @@
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
 
+  function hash(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return Math.abs(h);
+  }
+
   C.store = {
     load: function () {
       try {
         var raw = localStorage.getItem(KEY);
+        if (!raw) raw = localStorage.getItem(LEGACY);
         data = Object.assign(fresh(), raw ? JSON.parse(raw) : {});
+        if (!data.daily) data.daily = { date: '', id: '', done: false };
+        data.v = 2;
       } catch (e) {
         data = fresh();
       }
@@ -94,6 +107,23 @@
       this.save();
       var after = this.levelInfo(d.xp).level;
       return { before: before, after: after, up: after > before };
+    },
+    addRings: function (n) {
+      var d = this.get();
+      n = Math.max(0, Math.round(n || 0));
+      d.rings += n;
+      d.ringsTotal += n;
+      this.save();
+      return d.rings;
+    },
+    dailyChallenge: function (list) {
+      var d = this.get();
+      var t = dayStr();
+      if (!d.daily || d.daily.date !== t || !d.daily.id) {
+        d.daily = { date: t, id: list[hash(t) % list.length].id, done: false };
+        this.save();
+      }
+      return d.daily;
     },
     badge: function (id) {
       var b = this.get().badges;

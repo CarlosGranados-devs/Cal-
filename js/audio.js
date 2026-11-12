@@ -1,12 +1,15 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var ctx = null;
 
   var SFX = {
     click: [[620, 0.04, 'square', 0.035, 0]],
     tick: [[920, 0.025, 'square', 0.025, 0]],
     pop: [[300, 0.05, 'sine', 0.09, 0], [520, 0.06, 'sine', 0.07, 0.03]],
+    ring: [[988, 0.055, 'square', 0.045, 0], [1319, 0.11, 'square', 0.045, 0.055]],
+    jump: [[260, 0.07, 'square', 0.05, 0], [620, 0.09, 'square', 0.04, 0.055]],
+    spin: [[160, 0.16, 'sawtooth', 0.035, 0], [420, 0.12, 'square', 0.03, 0.06], [780, 0.08, 'square', 0.025, 0.14]],
     good: [[523, 0.07, 'square', 0.045, 0], [784, 0.1, 'square', 0.045, 0.07]],
     bad: [[220, 0.12, 'sawtooth', 0.045, 0], [165, 0.18, 'sawtooth', 0.045, 0.1]],
     win: [

@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -8,9 +8,9 @@
   var SLIDE_MS = 120;
 
   function injectCss() {
-    if (document.getElementById('calo-style-puzzle15')) return;
+    if (document.getElementById('nitro-style-puzzle15')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-puzzle15';
+    s.id = 'nitro-style-puzzle15';
     s.textContent =
       '.p15-board{position:relative;width:min(100%,400px,62vh);aspect-ratio:1;container-type:inline-size;background:var(--panel);border:1px solid var(--line);border-radius:12px;user-select:none;-webkit-user-select:none;touch-action:manipulation}' +
       '.p15-tile{position:absolute;padding:1.2cqw;box-sizing:border-box;border:0;background:none;cursor:pointer;transition:left ' + SLIDE_MS + 'ms ease-out,top ' + SLIDE_MS + 'ms ease-out;-webkit-tap-highlight-color:transparent}' +
@@ -175,7 +175,7 @@
     id: 'puzzle15',
     name: 'Puzzle 15',
     desc: 'Desliza las fichas hasta dejarlas en orden.',
-    tag: 'mente',
+    tag: 'estrategia',
     color: '#ff5a2a',
     unit: 'mov',
     icon: ['########', '#.#.#.##', '########', '#.#.#.##', '########', '#.#.#.##', '########', '#.#.#...'],

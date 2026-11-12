@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -16,9 +16,9 @@
   };
 
   function injectStyle() {
-    if (document.getElementById('calo-style-simon')) return;
+    if (document.getElementById('nitro-style-simon')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-simon';
+    s.id = 'nitro-style-simon';
     s.textContent =
       '.sm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(100%,420px);aspect-ratio:1;max-height:62vh;}' +
       '.sm-pad{position:relative;border-radius:18px;border:3px solid rgba(255,255,255,.08);cursor:pointer;display:grid;place-items:center;color:#0a0a0c;padding:0;' +
@@ -142,7 +142,7 @@
     color: '#38d9ff',
     unit: 'rondas',
     icon: ['.##..##.', '.##..##.', '........', '........', '.##..##.', '.##..##.', '........', '........'],
-    how: 'Calo ilumina los pads (rojo, ámbar, verde, cian) en orden.\nRepite la secuencia tocándolos o con las teclas 1-4 / flechas.\nCada ronda añade un paso. Se ve y se oye, pero funciona en silencio.',
+    how: 'Nitro ilumina los pads (rojo, ámbar, verde, cian) en orden.\nRepite la secuencia tocándolos o con las teclas 1-4 / flechas.\nCada ronda añade un paso. Se ve y se oye, pero funciona en silencio.',
     start: function (ctx) {
       ctx.choose({
         title: '¿qué velocidad?',

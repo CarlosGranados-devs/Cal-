@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
   var S = C.store;
@@ -38,19 +38,21 @@
 
   /* ------------------------------------------------------------------ badges */
   C.badges = [
-    { id: 'first', name: 'Primer paso', desc: 'Juega tu primer juego', test: function (s, x) { return x.plays >= 1; } },
-    { id: 'win1', name: 'Primera victoria', desc: 'Gana una partida', test: function (s, x) { return x.wins >= 1; } },
-    { id: 'win10', name: 'Imparable', desc: 'Gana 10 partidas', test: function (s, x) { return x.wins >= 10; } },
-    { id: 'win50', name: 'Leyenda', desc: 'Gana 50 partidas', test: function (s, x) { return x.wins >= 50; } },
+    { id: 'first', name: 'Primer anillo', desc: 'Juega tu primer juego', test: function (s, x) { return x.plays >= 1; } },
+    { id: 'win1', name: 'Primera zona', desc: 'Gana una partida', test: function (s, x) { return x.wins >= 1; } },
+    { id: 'win10', name: 'Velocista', desc: 'Gana 10 partidas', test: function (s, x) { return x.wins >= 10; } },
+    { id: 'win50', name: 'Leyenda de la zona', desc: 'Gana 50 partidas', test: function (s, x) { return x.wins >= 50; } },
     { id: 'ex5', name: 'Explorador', desc: 'Prueba 5 juegos distintos', test: function (s, x) { return x.played >= 5; } },
-    { id: 'ex15', name: 'Curioso', desc: 'Prueba 15 juegos distintos', test: function (s, x) { return x.played >= 15; } },
-    { id: 'exall', name: 'Coleccionista', desc: 'Prueba todos los juegos', test: function (s, x) { return x.played >= C.games.length && C.games.length > 0; } },
+    { id: 'ex15', name: 'Coleccionista', desc: 'Prueba 15 juegos distintos', test: function (s, x) { return x.played >= 15; } },
+    { id: 'exall', name: 'Maestro del arcade', desc: 'Prueba todos los juegos', test: function (s, x) { return x.played >= C.games.length && C.games.length > 0; } },
     { id: 'streak3', name: 'Constante', desc: 'Racha de 3 días', test: function (s) { return s.streak >= 3; } },
     { id: 'streak7', name: 'Hábito', desc: 'Racha de 7 días', test: function (s) { return s.streak >= 7; } },
     { id: 'lvl5', name: 'Nivel 5', desc: 'Llega al nivel 5', test: function (s) { return S.levelInfo(s.xp).level >= 5; } },
-    { id: 'lvl10', name: 'Nivel 10', desc: 'Llega al nivel 10', test: function (s) { return S.levelInfo(s.xp).level >= 10; } },
-    { id: 'poke', name: 'Cosquillas', desc: 'Toca a Calo 25 veces', test: function (s) { return s.pokes >= 25; } },
-    { id: 'owl', name: 'Búho', desc: 'Juega entre las 0:00 y las 5:00', test: function (s, x, ev) { var hr = new Date().getHours(); return ev === 'game' && hr < 5; } }
+    { id: 'lvl10', name: 'Súper Nitro', desc: 'Llega al nivel 10', test: function (s) { return S.levelInfo(s.xp).level >= 10; } },
+    { id: 'poke', name: 'Púas amistosas', desc: 'Toca a Nitro 25 veces', test: function (s) { return s.pokes >= 25; } },
+    { id: 'owl', name: 'Búho nocturno', desc: 'Juega entre las 0:00 y las 5:00', test: function (s, x, ev) { var hr = new Date().getHours(); return ev === 'game' && hr < 5; } },
+    { id: 'rings100', name: 'Cien anillos', desc: 'Junta 100 anillos', test: function (s) { return s.ringsTotal >= 100; } },
+    { id: 'rings500', name: 'Marea dorada', desc: 'Junta 500 anillos', test: function (s) { return s.ringsTotal >= 500; } }
   ];
 
   function checkBadges(ev) {
@@ -121,7 +123,7 @@
   }
 
   function setMood(el, mood, ms) {
-    var s = el.querySelector('.calo');
+    var s = el.querySelector('.nitro');
     if (!s) return;
     s.setAttribute('data-mood', mood);
     if (ms) {
@@ -142,10 +144,12 @@
     var st = S.get();
     var lv = S.levelInfo(st.xp);
     var stats = S.stats();
+    var daily = S.dailyChallenge(C.games);
+    var dailyDef = C.games.filter(function (g) { return g.id === daily.id; })[0];
     $app.innerHTML = '';
     document.body.classList.remove('in-game');
 
-    var mascotBox = h('button', { class: 'hero-mascot', 'aria-label': 'tocar a Calo', html: C.mascot.html(lv.level, 'idle') });
+    var mascotBox = h('button', { class: 'hero-mascot', 'aria-label': 'tocar a Nitro', html: C.mascot.html(lv.level, 'idle') });
     var bubble = h('p', { class: 'bubble-text' });
     var pokeFx = function () {
       st = S.get();
@@ -153,7 +157,11 @@
       S.save();
       var moods = ['happy', 'wow', 'wink', 'think'];
       setMood(mascotBox, U.pick(moods), 1400);
-      C.audio.play('pop');
+      mascotBox.classList.remove('spin');
+      void mascotBox.offsetWidth;
+      mascotBox.classList.add('spin');
+      setTimeout(function () { mascotBox.classList.remove('spin'); }, 700);
+      C.audio.play('ring');
       var line = st.pokes === 10 ? C.say.line('poke10', { name: st.name }) : C.say.line('poke', { name: st.name });
       say(bubble, line);
       checkBadges('poke');
@@ -165,13 +173,13 @@
       clearTimeout(idleTimer);
       idleTimer = setTimeout(function () {
         setMood(mascotBox, 'sleep');
-        say(bubble, 'zzz… despiértame si quieres jugar.');
+        say(bubble, 'zzz… despiértame si quieres correr.');
       }, 50000);
     }
     resetIdle();
 
     var header = h('header', { class: 'top' },
-      h('a', { class: 'logo', href: '#/', 'aria-label': 'calo' }, 'calo', h('span', { class: 'logo-cur', text: '_' })),
+      h('a', { class: 'logo', href: '#/', 'aria-label': 'nitro' }, 'nitro', h('span', { class: 'logo-cur', text: '_' })),
       h('div', { class: 'top-actions' },
         h('button', { class: 'icon-btn', 'aria-label': 'perfil y logros', html: icon('trophy'), onclick: openProfile }),
         h('button', { class: 'icon-btn', id: 'mute', 'aria-label': 'sonido', html: icon(st.muted ? 'off' : 'on'), onclick: toggleMute })
@@ -190,11 +198,28 @@
           h('div', { class: 'bar' }, h('i', { style: { width: Math.round(lv.pct * 100) + '%' } }))
         ),
         h('div', { class: 'chips' },
+          h('span', { class: 'chip gold', text: '◎ ' + st.rings + ' anillos' }),
           h('span', { class: 'chip', text: 'racha ' + st.streak + 'd' }),
           h('span', { class: 'chip', text: stats.played + '/' + C.games.length + ' juegos' }),
           h('span', { class: 'chip', text: stats.wins + ' victorias' })
         )
       )
+    );
+
+    var dailyBox = h('button', {
+      class: 'daily' + (daily.done ? ' done' : ''),
+      'aria-label': 'reto del día',
+      onclick: function () {
+        if (!dailyDef) return;
+        fromHub = true;
+        C.audio.play('click');
+        location.hash = '#/g/' + dailyDef.id;
+      }
+    },
+      h('span', { class: 'daily-tag', text: daily.done ? 'RETO COMPLETADO' : 'RETO DEL DÍA' }),
+      h('b', { class: 'daily-name', text: dailyDef ? dailyDef.name : '—' }),
+      h('span', { class: 'daily-desc', text: daily.done ? 'vuelve mañana por otro reto' : (dailyDef ? dailyDef.desc : '') }),
+      h('span', { class: 'daily-prize', text: daily.done ? '✓' : '+20 ◎' })
     );
 
     var filters = h('nav', { class: 'filters', 'aria-label': 'categorías' });
@@ -215,10 +240,11 @@
         ' · inspirado en ',
         h('a', { href: 'https://github.com/YonaZakkart/yoro', target: '_blank', rel: 'noopener', text: 'yoro' }),
         ' de YonaZakkart'
-      )
+      ),
+      h('p', { class: 'foot-note', text: 'Nitro es un personaje original inspirado en los plataformas de 16 bits. Sin afiliación con SEGA.' })
     );
 
-    $app.appendChild(h('div', { class: 'wrap' }, header, hero, filters, grid, footer));
+    $app.appendChild(h('div', { class: 'wrap' }, header, hero, dailyBox, filters, grid, footer));
     renderGrid();
 
     var first = !st.greeted;
@@ -326,7 +352,7 @@
     inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
     var body = h('div', { class: 'ask' },
       h('div', { class: 'ask-mascot', html: C.mascot.html(1, 'wink') }),
-      h('p', { text: 'hola. soy calo, un fantasma que vive en tu navegador y guarda récords. ¿cómo te llamas?' }),
+      h('p', { text: 'hola. soy nitro, un erizo azul que vive en tu navegador y guarda récords. ¿cómo te llamas?' }),
       inp,
       h('button', { class: 'g-btn primary', text: 'listo', onclick: go })
     );
@@ -497,6 +523,16 @@
         var rec = S.recordGame(def.id, { win: !!o.win, score: o.score, better: o.better || 'high' });
         var xp = (o.win ? 12 : 4) + (rec.isRecord && o.score != null && !rec.first ? 6 : 0) + (rec.first ? 5 : 0);
         var lvl = S.addXp(xp);
+        var daily = S.dailyChallenge(C.games);
+        var dailyBonus = 0;
+        if (daily.id === def.id && !daily.done) {
+          daily.done = true;
+          dailyBonus = 20;
+          S.save();
+        }
+        var baseRings = o.rings != null ? o.rings : (o.win ? 8 : 2);
+        var earned = Math.max(0, Math.round(baseRings + (o.win ? 8 : 2) + (rec.isRecord && o.score != null && !rec.first ? 5 : 0) + dailyBonus));
+        S.addRings(earned);
         var st = S.get();
         var x = S.stats();
         var newBadges = checkBadges('game');
@@ -510,7 +546,8 @@
             rec.isRecord && o.score != null ? h('div', { class: 'result-rec', text: rec.first ? 'primer registro' : '¡nuevo récord!' }) : null,
             o.msg ? h('p', { class: 'result-msg', text: o.msg }) : null,
             h('p', { class: 'result-say', text: C.say.line(lines, { name: st.name }) }),
-            h('p', { class: 'result-xp', text: '+' + xp + ' xp' + (lvl.up ? ' · ¡nivel ' + lvl.after + '!' : '') }),
+            h('p', { class: 'result-xp', text: '+' + xp + ' xp · +' + earned + ' ◎' + (lvl.up ? ' · ¡nivel ' + lvl.after + '!' : '') }),
+            dailyBonus ? h('div', { class: 'result-daily', text: 'reto del día · +20 anillos' }) : null,
             h('div', { class: 'g-row' },
               h('button', { class: 'g-btn primary', text: 'otra vez', onclick: function () { startGame(def); } }),
               h('button', { class: 'g-btn', text: 'menú', onclick: function () { goHub(); } })
@@ -521,6 +558,7 @@
         C.audio.play(lvl.up ? 'level' : o.win ? 'win' : 'lose');
         ctx.vibrate(o.win ? [20, 40, 20] : 40);
         if (lvl.up) setTimeout(function () { C.toast('¡subiste al nivel ' + lvl.after + '!', 'badge'); }, 600);
+        if (dailyBonus) setTimeout(function () { C.toast('reto del día completado · +20 anillos', 'badge'); }, 1200);
       },
       isDone: function () { return done; }
     };
@@ -580,7 +618,7 @@
       var d = def.start(ctx);
       if (typeof d === 'function') current.destroy = d;
     } catch (err) {
-      console.error('[calo] error en juego', def.id, err);
+      console.error('[nitro] error en juego', def.id, err);
       root.appendChild(h('p', { class: 'g-msg', text: 'este juego tuvo un error. vuelve al menú.' }));
     }
     if (!S.get().seen) S.get().seen = {};
@@ -634,7 +672,7 @@
     });
     var title = document.title;
     document.addEventListener('visibilitychange', function () {
-      document.title = document.hidden ? '¿a dónde vas? · calo' : title;
+      document.title = document.hidden ? '¿a dónde vas? · nitro' : title;
     });
     route();
     if (!S.get().name) askName();

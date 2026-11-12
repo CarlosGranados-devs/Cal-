@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -18,9 +18,9 @@
   ];
 
   function injectStyle() {
-    if (document.getElementById('calo-style-codigo')) return;
+    if (document.getElementById('nitro-style-codigo')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-codigo';
+    s.id = 'nitro-style-codigo';
     s.textContent =
       '.cd-board{display:flex;flex-direction:column;gap:4px;width:100%;max-width:340px;}' +
       '.cd-row{display:flex;align-items:center;gap:8px;padding:3px 8px;border:1px solid var(--line);border-radius:10px;background:var(--panel);}' +
@@ -209,11 +209,11 @@
     id: 'codigo',
     name: 'Código',
     desc: 'Descifra el código secreto de 4 colores en 10 intentos.',
-    tag: 'mente',
+    tag: 'estrategia',
     color: '#a78bfa',
     unit: 'pts',
     icon: ['.######.', '#......#', '#.#..#.#', '#......#', '#.#..#.#', '#......#', '.######.', '...##...'],
-    how: 'Calo esconde 4 colores. Arma tu intento y pulsa probar.\nCuadrado = color y lugar correctos. Aro = color correcto en otro lugar.\nTeclas 1 a 6 para colores, borrar y enter.',
+    how: 'Nitro esconde 4 colores. Arma tu intento y pulsa probar.\nCuadrado = color y lugar correctos. Aro = color correcto en otro lugar.\nTeclas 1 a 6 para colores, borrar y enter.',
     start: function (ctx) {
       ctx.choose({
         title: '¿qué código?',

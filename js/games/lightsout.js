@@ -1,15 +1,15 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
   var MODES = { a: 3, b: 4, c: 5 };
 
   function injectCss() {
-    if (document.getElementById('calo-style-lightsout')) return;
+    if (document.getElementById('nitro-style-lightsout')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-lightsout';
+    s.id = 'nitro-style-lightsout';
     s.textContent =
       '.lo-board{display:grid;gap:8px;width:100%;touch-action:manipulation}' +
       '.lo-cell{aspect-ratio:1;padding:0;background:var(--panel2);border:1px solid var(--line);border-radius:10px;cursor:pointer;transition:background .12s,box-shadow .12s,transform .08s,border-color .12s;-webkit-tap-highlight-color:transparent}' +
@@ -125,7 +125,7 @@
     name: 'Apagones',
     desc: 'Apaga todas las luces; cada toque cambia a sus vecinas.',
     tag: 'mente',
-    color: '#ff2c2c',
+    color: '#38d9ff',
     unit: 'mov',
     icon: ['...##...', '..####..', '.######.', '.######.', '.######.', '..####..', '..####..', '...##...', '..####..'],
     how: 'Tocar una luz la cambia a ella y a sus 4 vecinas.\nApaga todas las luces.\nCada nivel se puede resolver. Menos movimientos = mejor.',

@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = (window.Calo = window.Calo || {});
+  var C = (window.Nitro = window.Nitro || {});
 
   C.games = [];
   C.register = function (def) {

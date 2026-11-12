@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -15,9 +15,9 @@
   var LONG_MS = 420;
 
   function injectCss() {
-    if (document.getElementById('calo-style-buscaminas')) return;
+    if (document.getElementById('nitro-style-buscaminas')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-buscaminas';
+    s.id = 'nitro-style-buscaminas';
     s.textContent =
       '.bm-board{display:grid;gap:3px;width:100%;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}' +
       '.bm-cell{aspect-ratio:1;padding:0;display:grid;place-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:6px;font-family:var(--pix);font-size:14px;color:var(--fg);cursor:pointer;min-width:0}' +
@@ -273,7 +273,7 @@
     id: 'buscaminas',
     name: 'Buscaminas',
     desc: 'Despeja el campo sin pisar ninguna mina.',
-    tag: 'mente',
+    tag: 'estrategia',
     color: '#4fd1e8',
     fmt: function (v) { return v + ' s'; },
     icon: ['...##...', '.#.##.#.', '..####..', '########', '########', '..####..', '.#.##.#.', '...##...'],

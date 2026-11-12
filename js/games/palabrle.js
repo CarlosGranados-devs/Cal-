@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -42,9 +42,9 @@
   }
 
   function injectCss() {
-    if (document.getElementById('calo-style-palabrle')) return;
+    if (document.getElementById('nitro-style-palabrle')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-palabrle';
+    s.id = 'nitro-style-palabrle';
     s.textContent =
       '.pl-wrap{--ts:min(54px,calc((100vw - 56px) / 5 - 5px),calc((100vh - 360px) / 6));gap:8px}' +
       '.pl-grid{display:grid;grid-template-rows:repeat(6,var(--ts));gap:5px}' +

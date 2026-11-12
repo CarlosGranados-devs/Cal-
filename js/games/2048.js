@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -22,9 +22,9 @@
   };
 
   function injectCss() {
-    if (document.getElementById('calo-style-2048')) return;
+    if (document.getElementById('nitro-style-2048')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-2048';
+    s.id = 'nitro-style-2048';
     s.textContent =
       '.t48-board{position:relative;width:min(100%,400px,62vh);aspect-ratio:1;container-type:inline-size;background:var(--panel);border:1px solid var(--line);border-radius:12px;touch-action:none;user-select:none;-webkit-user-select:none}' +
       '.t48-cell,.t48-tile{position:absolute;width:25%;height:25%;padding:1.3cqw;box-sizing:border-box}' +
@@ -230,7 +230,7 @@
     id: '2048',
     name: '2048',
     desc: 'Une fichas iguales hasta llegar a 2048.',
-    tag: 'mente',
+    tag: 'estrategia',
     color: '#ff8a14',
     unit: 'pts',
     icon: ['########', '#......#', '#.##.##.', '#..#.#..', '#.##.##.', '#.#....#', '#.##.##.', '########'],

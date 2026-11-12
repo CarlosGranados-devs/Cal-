@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -67,7 +67,7 @@
           win: false,
           score: score,
           scoreText: score + (score === 1 ? ' tubo' : ' tubos'),
-          title: 'calo se estrelló',
+          title: 'nitro se estrelló',
           msg: score === 0 ? 'ni un tubo. toca más suave' : 'pasaste ' + score + (score === 1 ? ' tubo' : ' tubos')
         });
       });
@@ -121,41 +121,62 @@
       if (y + R * 0.9 > H - GROUND) { y = H - GROUND - R * 0.9; die(); }
     }
 
-    function drawCalo() {
+    function drawNitro() {
       var tilt = U.clamp(vy / 700, -0.5, 0.9);
       g.save();
       g.translate(CX, y);
       g.rotate(tilt);
-      g.fillStyle = dead ? '#ff7a7a' : '#ececf0';
+      g.fillStyle = dead ? '#a81722' : '#1b6fd6';
+      g.strokeStyle = '#0b3d91';
+      g.lineWidth = 1.5;
       g.beginPath();
-      g.arc(0, -2, R, Math.PI, 0);
-      g.lineTo(R, R);
-      var wv = Math.sin(t * 14) * 1.5;
-      g.lineTo(R * 0.55, R - 4 + wv);
-      g.lineTo(R * 0.1, R);
-      g.lineTo(-R * 0.4, R - 4 - wv);
-      g.lineTo(-R, R);
+      g.moveTo(-4, -8);
+      g.lineTo(-R - 12, -12);
+      g.lineTo(-R - 2, 0);
+      g.lineTo(-R - 11, 6);
+      g.lineTo(-4, 8);
       g.closePath();
       g.fill();
-      g.fillStyle = '#ff2c2c';
-      g.fillRect(-6, -6, 4, 5);
-      g.fillRect(2, -6, 4, 5);
+      g.stroke();
+      g.fillStyle = dead ? '#ff8a8a' : '#2f9bff';
+      g.beginPath();
+      g.arc(0, 0, R, 0, Math.PI * 2);
+      g.fill();
+      g.stroke();
+      g.fillStyle = '#f7c98b';
+      g.beginPath();
+      g.ellipse(4, 4, 7, 5, 0, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#f7fbff';
+      g.beginPath();
+      g.ellipse(-1, -3, 4.5, 5.5, 0, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#071426';
+      g.beginPath();
+      g.ellipse(0, -2, 1.8, 3, 0, 0, Math.PI * 2);
+      g.fill();
+      g.beginPath();
+      g.arc(10, 4, 1.8, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#e8323c';
+      g.fillRect(-8, R - 1, 7, 4);
+      g.fillRect(1, R - 1, 7, 4);
       g.restore();
     }
 
     function drawPipe(p) {
       var top = p.cy - p.gap / 2;
       var bot = p.cy + p.gap / 2;
-      g.fillStyle = '#b01818';
+      g.fillStyle = '#1d7a52';
       g.fillRect(p.x, 0, PIPE_W, top);
       g.fillRect(p.x, bot, PIPE_W, H - GROUND - bot);
-      g.fillStyle = '#ff2c2c';
+      g.fillStyle = '#43d17a';
       g.fillRect(p.x + 4, 0, 10, top);
       g.fillRect(p.x + 4, bot, 10, H - GROUND - bot);
-      g.fillStyle = '#8f1c1c';
+      g.fillStyle = '#14524a';
       g.fillRect(p.x - 4, top - 16, PIPE_W + 8, 16);
       g.fillRect(p.x - 4, bot, PIPE_W + 8, 16);
-      g.fillStyle = '#ff2c2c';
+      g.fillStyle = '#43d17a';
       g.fillRect(p.x - 4, top - 16, 10, 16);
       g.fillRect(p.x - 4, bot, 10, 16);
     }
@@ -163,31 +184,31 @@
     function draw() {
       g.save();
       if (shake > 0) g.translate(U.rand(-3, 3), U.rand(-3, 3));
-      g.fillStyle = '#0d0d11';
+      g.fillStyle = '#081426';
       g.fillRect(-4, -4, W + 8, H + 8);
-      g.fillStyle = '#2a2a33';
+      g.fillStyle = '#1e4a7a';
       stars.forEach(function (s) {
         var sx = ((s.x - scroll * 0.1 * s.s) % W + W) % W;
         g.fillRect(sx, s.y, s.s, s.s);
       });
       pipes.forEach(drawPipe);
-      g.fillStyle = '#16161c';
+      g.fillStyle = '#0c2038';
       g.fillRect(0, H - GROUND, W, GROUND);
-      g.fillStyle = '#ff2c2c';
+      g.fillStyle = '#ffcf33';
       g.fillRect(0, H - GROUND, W, 3);
-      g.fillStyle = '#26262e';
+      g.fillStyle = '#1e4a7a';
       for (var x = -((scroll) % 24); x < W; x += 24) g.fillRect(x, H - GROUND + 14, 12, 3);
-      drawCalo();
+      drawNitro();
       g.textAlign = 'center';
       if (started) {
-        g.fillStyle = 'rgba(236,236,240,0.9)';
+        g.fillStyle = 'rgba(242,248,255,0.9)';
         g.font = 'bold 34px monospace';
         g.fillText(String(score), W / 2, 56);
       } else {
-        g.fillStyle = '#ececf0';
+        g.fillStyle = '#f2f8ff';
         g.font = 'bold 18px monospace';
         g.fillText('toca para empezar', W / 2, 150);
-        g.fillStyle = '#8a8a94';
+        g.fillStyle = '#8fb3d9';
         g.font = '13px monospace';
         g.fillText('clic, toque o espacio = impulso', W / 2, 176);
       }
@@ -203,13 +224,13 @@
 
   C.register({
     id: 'flap',
-    name: 'Flap Calo',
-    desc: 'Vuela entre las columnas rojas sin chocar.',
+    name: 'Flap Nitro',
+    desc: 'Vuela entre las columnas verdes sin chocar.',
     tag: 'arcade',
-    color: '#ff2c2c',
+    color: '#43d17a',
     unit: 'tubos',
     icon: ['..##..##', '..##..##', '..##..##', '..##..##', '........', '.####.##', '.####.##', '..##..##'],
-    how: 'Toca la pantalla, haz clic o pulsa espacio para dar un impulso a Calo.\nCruza entre las columnas rojas sin tocarlas ni caer al suelo.\nCada columna pasada suma 1; el hueco se va cerrando despacio.',
+    how: 'Toca la pantalla, haz clic o pulsa espacio para dar un impulso a Nitro.\nCruza entre las columnas verdes sin tocarlas ni caer al suelo.\nCada columna pasada suma 1; el hueco se va cerrando despacio.',
     start: function (ctx) { play(ctx); }
   });
 })();

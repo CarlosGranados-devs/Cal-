@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -14,9 +14,9 @@
   ];
 
   function injectStyle() {
-    if (document.getElementById('calo-style-stroop')) return;
+    if (document.getElementById('nitro-style-stroop')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-stroop';
+    s.id = 'nitro-style-stroop';
     s.textContent =
       '.st-bar{width:100%;height:10px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;overflow:hidden;}' +
       '.st-bar i{display:block;height:100%;width:100%;background:var(--red);transform-origin:left;}' +

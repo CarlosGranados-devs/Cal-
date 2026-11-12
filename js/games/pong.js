@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -38,7 +38,7 @@
     var dragOff = null;
     var hits = 0;
 
-    ctx.status('tú ' + ps + ' - ' + as + ' calo');
+    ctx.status('tú ' + ps + ' - ' + as + ' nitro');
     ctx.score('a ' + WIN_AT);
 
     function resetBall(dir) {
@@ -61,7 +61,7 @@
 
     function point(playerScored) {
       if (playerScored) ps++; else as++;
-      ctx.status('tú ' + ps + ' - ' + as + ' calo');
+      ctx.status('tú ' + ps + ' - ' + as + ' nitro');
       ctx.sfx(playerScored ? 'good' : 'bad');
       ctx.vibrate(playerScored ? 15 : 35);
       flash = 0.25;
@@ -81,12 +81,12 @@
           score: diff * 10 + 10,
           better: 'high',
           scoreText: diff * 10 + 10 + ' pts',
-          title: '¡le ganaste a calo!',
+          title: '¡le ganaste a nitro!',
           msg: ps + ' - ' + as + ' en el marcador'
         });
       } else {
         ctx.mood('sad');
-        ctx.finish({ win: false, title: 'calo te ganó', msg: ps + ' - ' + as + '. la próxima la remontas' });
+        ctx.finish({ win: false, title: 'nitro te ganó', msg: ps + ' - ' + as + '. la próxima la remontas' });
       }
     }
 
@@ -202,26 +202,26 @@
       g.setTransform(1, 0, 0, 1, 0, 0);
       var dpr = cv.canvas.width / SW;
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      g.fillStyle = '#0d0d11';
+      g.fillStyle = '#081426';
       g.fillRect(0, 0, SW, SH);
       g.save();
       if (portrait) g.transform(0, -1, 1, 0, 0, SH);
-      g.fillStyle = flash > 0 ? '#2a1010' : '#0d0d11';
+      g.fillStyle = flash > 0 ? '#0f2f55' : '#081426';
       g.fillRect(0, 0, L, T);
-      g.fillStyle = '#26262e';
+      g.fillStyle = '#1e4a7a';
       for (var y = 6; y < T; y += 20) g.fillRect(L / 2 - 1.5, y, 3, 10);
       for (var i = 0; i < trail.length; i++) {
-        g.fillStyle = 'rgba(255,44,44,' + (i / trail.length) * 0.35 + ')';
+        g.fillStyle = 'rgba(255,207,51,' + (i / trail.length) * 0.35 + ')';
         g.fillRect(trail[i].x - BR * 0.6, trail[i].y - BR * 0.6, BR * 1.2, BR * 1.2);
       }
-      g.fillStyle = '#ececf0';
+      g.fillStyle = '#f2f8ff';
       g.fillRect(PX - PW / 2, py - PH / 2, PW, PH);
-      g.fillStyle = '#ff2c2c';
+      g.fillStyle = '#2f9bff';
       g.fillRect(L - PX - PW / 2, ay - PH / 2, PW, PH);
-      g.fillStyle = '#ececf0';
+      g.fillStyle = '#ffcf33';
       g.fillRect(ball.x - BR, ball.y - BR, BR * 2, BR * 2);
       g.restore();
-      g.fillStyle = 'rgba(236,236,240,0.16)';
+      g.fillStyle = 'rgba(242,248,255,0.16)';
       g.font = 'bold 40px monospace';
       g.textAlign = 'center';
       if (portrait) {
@@ -232,7 +232,7 @@
         g.fillText(String(as), SW / 2 + 50, 54);
       }
       if (serveWait > 0 && ps + as === 0) {
-        g.fillStyle = '#8a8a94';
+        g.fillStyle = '#8fb3d9';
         g.font = '13px monospace';
         g.fillText(portrait ? 'arrastra para mover tu paleta' : 'mouse, toque o flechas', SW / 2, SH - 14);
       }
@@ -248,20 +248,20 @@
   C.register({
     id: 'pong',
     name: 'Pong',
-    desc: 'El clásico contra Calo. Primero a 7 gana.',
+    desc: 'El clásico contra Nitro. Primero a 7 gana.',
     tag: 'arcade',
-    color: '#ff2c2c',
+    color: '#2f9bff',
     unit: 'pts',
     icon: ['........', '#......#', '#..##..#', '#......#', '#......#', '#......#', '#......#', '........'],
     how: 'Mueve tu paleta (blanca) con el mouse, arrastrando el dedo o con las flechas.\nLa pelota acelera con cada golpe; pega con la orilla de la paleta para cambiar el ángulo.\nEl primero en llegar a 7 gana.',
     start: function (ctx) {
       ctx.choose(
         {
-          title: 'dificultad de calo',
+          title: 'dificultad de nitro',
           options: [
-            { id: 'facil', label: 'fácil', desc: 'calo se distrae seguido' },
+            { id: 'facil', label: 'fácil', desc: 'nitro se distrae seguido' },
             { id: 'normal', label: 'normal', desc: 'justo y parejo' },
-            { id: 'dificil', label: 'difícil', desc: 'calo casi no falla' }
+            { id: 'dificil', label: 'difícil', desc: 'nitro casi no falla' }
           ]
         },
         function (id) { play(ctx, LEVELS[id]); }

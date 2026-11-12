@@ -1,13 +1,13 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
   function injectCss() {
-    if (document.getElementById('calo-style-mates')) return;
+    if (document.getElementById('nitro-style-mates')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-mates';
+    s.id = 'nitro-style-mates';
     s.textContent =
       '.mt-q{font-family:var(--pix);font-size:30px;color:var(--fg);text-align:center;min-height:44px;white-space:nowrap}' +
       '.mt-ans{width:100%;max-width:300px;min-height:56px;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;font-family:var(--pix);font-size:24px;color:var(--red)}' +

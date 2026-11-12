@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -26,9 +26,9 @@
   };
 
   function injectCss() {
-    if (document.getElementById('calo-style-memoria')) return;
+    if (document.getElementById('nitro-style-memoria')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-memoria';
+    s.id = 'nitro-style-memoria';
     s.textContent =
       '.mem-board{display:grid;gap:8px;width:100%;perspective:800px}' +
       '.mem-card{position:relative;aspect-ratio:1;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}' +

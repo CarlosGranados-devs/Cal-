@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -82,7 +82,7 @@
       shake = 0.25;
       ctx.sfx('bad');
       ctx.vibrate(45);
-      burst(px, PY, '#ff2c2c', 12);
+      burst(px, PY, '#ff5a5f', 12);
       hud();
       if (lives <= 0) {
         over = true;
@@ -94,7 +94,7 @@
             win: false,
             score: s,
             scoreText: s + ' pts',
-            title: 'calo se llenó de bugs',
+            title: 'nitro se llenó de bugs',
             msg: Math.floor(time) + ' s sobrevividos · ' + got + ' bits'
           });
         });
@@ -167,23 +167,53 @@
       }
     }
 
-    function drawCalo() {
+    function drawNitro() {
       if (inv > 0 && Math.floor(inv * 14) % 2 === 0) return;
       g.save();
       g.translate(px, PY);
-      g.fillStyle = '#ececf0';
+      g.fillStyle = '#1b6fd6';
+      g.strokeStyle = '#0b3d91';
+      g.lineWidth = 2;
       g.beginPath();
-      g.arc(0, -2, PR, Math.PI, 0);
-      g.lineTo(PR, PR);
-      g.lineTo(PR * 0.55, PR - 4);
-      g.lineTo(PR * 0.1, PR);
-      g.lineTo(-PR * 0.4, PR - 4);
-      g.lineTo(-PR, PR);
+      g.moveTo(-6, -8);
+      g.lineTo(-PR - 12, -14);
+      g.lineTo(-PR - 2, -2);
+      g.lineTo(-PR - 13, 3);
+      g.lineTo(-PR - 1, 7);
+      g.lineTo(-PR - 9, 14);
+      g.lineTo(-4, 10);
       g.closePath();
       g.fill();
-      g.fillStyle = '#ff2c2c';
-      g.fillRect(-6, -6, 4, 5);
-      g.fillRect(2, -6, 4, 5);
+      g.stroke();
+      g.fillStyle = '#2f9bff';
+      g.beginPath();
+      g.arc(0, -2, PR, 0, Math.PI * 2);
+      g.fill();
+      g.stroke();
+      g.fillStyle = '#f7c98b';
+      g.beginPath();
+      g.ellipse(5, 4, 8, 6, 0, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#f7fbff';
+      g.beginPath();
+      g.ellipse(-2, -6, 4.6, 6, 0, 0, Math.PI * 2);
+      g.fill();
+      g.beginPath();
+      g.ellipse(7, -6, 3.6, 5, 0, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#071426';
+      g.beginPath();
+      g.ellipse(-1, -5, 2, 3.2, 0, 0, Math.PI * 2);
+      g.fill();
+      g.beginPath();
+      g.ellipse(8, -5, 1.6, 2.6, 0, 0, Math.PI * 2);
+      g.fill();
+      g.beginPath();
+      g.arc(12, 4, 2, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#e8323c';
+      g.fillRect(-9, PR - 1, 8, 4);
+      g.fillRect(1, PR - 1, 8, 4);
       if (shield) {
         g.strokeStyle = '#38d9ff';
         g.lineWidth = 2;
@@ -197,23 +227,23 @@
     function draw() {
       g.save();
       if (shake > 0) g.translate(U.rand(-3, 3), U.rand(-3, 3));
-      g.fillStyle = '#0d0d11';
+      g.fillStyle = '#081426';
       g.fillRect(-4, -4, W + 8, H + 8);
-      g.fillStyle = '#2a2a33';
+      g.fillStyle = '#1e4a7a';
       stars.forEach(function (s) {
         var sy = (s.y + time * 40 * s.s) % H;
         g.fillRect(s.x, sy, s.s, s.s * 3);
       });
-      g.fillStyle = '#16161c';
+      g.fillStyle = '#0c2038';
       g.fillRect(0, PY + PR + 6, W, H - PY - PR - 6);
-      g.fillStyle = '#ff2c2c';
+      g.fillStyle = '#ffcf33';
       g.fillRect(0, PY + PR + 6, W, 2);
       blocks.forEach(function (b) {
-        g.fillStyle = '#b01818';
+        g.fillStyle = '#8f1c3a';
         g.fillRect(b.x, b.y, b.w, b.h);
-        g.fillStyle = '#ff2c2c';
+        g.fillStyle = '#ff5a5f';
         g.fillRect(b.x, b.y, b.w, 4);
-        g.fillStyle = '#ececf0';
+        g.fillStyle = '#f2f8ff';
         g.font = 'bold 12px monospace';
         g.textAlign = 'center';
         g.fillText(b.t, b.x + b.w / 2, b.y + 19);
@@ -230,9 +260,9 @@
           g.textAlign = 'center';
           g.fillText('S', c.x, c.y + 4);
         } else {
-          g.fillStyle = '#ffb020';
+          g.fillStyle = '#ffcf33';
           g.fillRect(c.x - 6, c.y - 6, 12, 12);
-          g.fillStyle = '#0a0a0c';
+          g.fillStyle = '#081426';
           g.font = 'bold 10px monospace';
           g.textAlign = 'center';
           g.fillText('1', c.x, c.y + 4);
@@ -244,15 +274,15 @@
         g.fillRect(q.x - 1.5, q.y - 1.5, 3, 3);
       });
       g.globalAlpha = 1;
-      drawCalo();
+      drawNitro();
       g.textAlign = 'center';
       if (!started) {
-        g.fillStyle = 'rgba(10,10,12,0.7)';
+        g.fillStyle = 'rgba(8,20,38,0.78)';
         g.fillRect(0, H / 2 - 40, W, 80);
-        g.fillStyle = '#ececf0';
+        g.fillStyle = '#f2f8ff';
         g.font = 'bold 16px monospace';
         g.fillText('arrastra para esquivar', W / 2, H / 2 - 8);
-        g.fillStyle = '#8a8a94';
+        g.fillStyle = '#8fb3d9';
         g.font = '13px monospace';
         g.fillText('mouse, dedo, A/D o flechas', W / 2, H / 2 + 16);
       }
@@ -270,10 +300,10 @@
     name: 'Esquiva',
     desc: 'Esquiva errores que caen y junta bits.',
     tag: 'arcade',
-    color: '#ff2c2c',
+    color: '#ff5a5f',
     unit: 'pts',
     icon: ['.######.', '.#.##.#.', '.######.', '........', '...##...', '..####..', '..#..#..', '........'],
-    how: 'Mueve a Calo con el dedo, el mouse, A/D o las flechas.\nEvita los bloques de error (404, bug...). Junta bits para sumar; el círculo azul da escudo.\nTienes 3 vidas. Puntos: segundos x 10 + bits.',
+    how: 'Mueve a Nitro con el dedo, el mouse, A/D o las flechas.\nEvita los bloques de error (404, bug...). Junta bits para sumar; el círculo azul da escudo.\nTienes 3 vidas. Puntos: segundos x 10 + bits.',
     start: function (ctx) { play(ctx); }
   });
 })();

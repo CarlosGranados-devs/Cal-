@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -8,9 +8,9 @@
   var MAX_FALSE = 3;
 
   function injectStyle() {
-    if (document.getElementById('calo-style-reflejo')) return;
+    if (document.getElementById('nitro-style-reflejo')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-reflejo';
+    s.id = 'nitro-style-reflejo';
     s.textContent =
       '.rf-pad{width:100%;max-width:560px;flex:1;min-height:200px;border-radius:18px;border:3px solid var(--red-dim);background:#3a0d0d;color:var(--fg);' +
       'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;font-family:inherit;padding:16px;text-align:center;}' +
@@ -26,10 +26,10 @@
 
   function rating(avg) {
     if (avg < 190) return 'reflejos de rayo. ¿seguro que eres humano?';
-    if (avg < 240) return 'reflejos de gato. calo aplaude';
+    if (avg < 240) return 'reflejos de gato. nitro aplaude';
     if (avg < 300) return 'tiempo de humano sano. bien ahí';
     if (avg < 400) return 'calentando motores. otra y mejoras';
-    return 'calo se durmió esperando. ¡despierta!';
+    return 'nitro se durmió esperando. ¡despierta!';
   }
 
   function play(ctx) {
@@ -80,7 +80,7 @@
         ctx.vibrate(60);
         hud();
         if (falseStarts >= MAX_FALSE) {
-          setPad('fs', 'falso inicio', 'demasiados. calo se rinde');
+          setPad('fs', 'falso inicio', 'demasiados. nitro se rinde');
           ctx.after(700, function () {
             ctx.mood('sad');
             ctx.finish({ win: false, title: 'demasiado ansioso', msg: 'tres falsos inicios. respira y vuelve a intentar' });

@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -78,10 +78,10 @@
     name: 'Adivina',
     desc: 'Encuentra el número secreto con pistas de frío y caliente.',
     tag: 'mente',
-    color: '#ff2c2c',
+    color: '#ff5ea8',
     unit: 'pts',
     icon: ['..####..', '.##..##.', '....###.', '...##...', '...##...', '........', '...##...', '...##...'],
-    how: 'Calo piensa un número.\nEscribe tu intento y te diré si el mío es mayor o menor, y qué tan cerca estás.\nMenos intentos usados = más puntos.',
+    how: 'Nitro piensa un número.\nEscribe tu intento y te diré si el mío es mayor o menor, y qué tan cerca estás.\nMenos intentos usados = más puntos.',
     start: function (ctx) {
       ctx.choose(
         {

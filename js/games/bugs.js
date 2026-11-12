@@ -1,21 +1,21 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
   var TOTAL = 45;
   var BUG = ['..#....#..', '...#..#...', '....##....', '..######..', '.##.##.##.', '#########.', '.########.', '#########.', '..######..', '.#..##..#.', '#...##...#'];
-  var GHOST = ['..#####..', '.#######.', '#########', '##..#..##', '#########', '#########', '#########', '#########', '##.###.##', '#..###..#'];
+  var NITRO = ['.#.....#.', '###...###', '.#######.', '##.#.#.##', '#########', '##.###.##', '#########', '.#######.', '.#.#.#.#.', '#.#...#.#'];
   var MODES = {
     n: { spawn0: 950, spawn1: 420, life0: 1500, life1: 760, decoy: 0.18, multi: 1, label: 'normal', goal: 150 },
     f: { spawn0: 650, spawn1: 260, life0: 1100, life1: 520, decoy: 0.28, multi: 2, label: 'frenético', goal: 220 }
   };
 
   function injectStyle() {
-    if (document.getElementById('calo-style-bugs')) return;
+    if (document.getElementById('nitro-style-bugs')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-bugs';
+    s.id = 'nitro-style-bugs';
     s.textContent =
       '.bg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(100%,420px);}' +
       '.bg-hole{position:relative;aspect-ratio:1;border:0;padding:0;background:transparent;cursor:pointer;overflow:hidden;border-radius:14px;color:var(--fg);}' +
@@ -26,7 +26,7 @@
       '.bg-hole.hit .bg-item{transform:translateY(0) scale(1.25);opacity:0;transition:transform .2s,opacity .2s;}' +
       '.bg-item svg{width:100%;height:100%;display:block;}' +
       '.bg-hole.bug{color:var(--red);}' +
-      '.bg-hole.ghost{color:var(--c4);}' +
+      '.bg-hole.nitro{color:var(--c1);}' +
       '.bg-hole.up:active{filter:brightness(1.4);}' +
       '.bg-hole.bad{animation:shake .28s;background:rgba(255,44,44,.18);}' +
       '.bg-pop{position:absolute;left:50%;top:34%;transform:translateX(-50%);font-family:var(--pix);font-size:14px;z-index:4;pointer-events:none;animation:bgpop .6s forwards;}' +
@@ -43,7 +43,7 @@
     var best = 0;
     var killed = 0;
     var nextSpawn = 0.6;
-    var msg = h('p', { class: 'g-msg', text: 'toca los bugs rojos, no a calo (el fantasma cian)' });
+    var msg = h('p', { class: 'g-msg', text: 'toca los bugs rojos, no a nitro (el erizo azul)' });
     var grid = h('div', { class: 'bg-grid' });
 
     for (var i = 0; i < 9; i++) {
@@ -76,14 +76,14 @@
 
     function hide(hl) {
       hl.kind = null;
-      hl.el.classList.remove('up', 'bug', 'ghost');
+      hl.el.classList.remove('up', 'bug', 'nitro');
       hl.el.setAttribute('aria-label', 'agujero vacío');
     }
 
     function show(idx, kind) {
       var hl = holes[idx];
       var item = hl.el.querySelector('.bg-item');
-      item.innerHTML = C.pixicon(kind === 'bug' ? BUG : GHOST);
+      item.innerHTML = C.pixicon(kind === 'bug' ? BUG : NITRO);
       hl.kind = kind;
       hl.life = lerp(mode.life0, mode.life1) / 1000;
       hl.until = t + hl.life;
@@ -91,7 +91,7 @@
       hl.el.classList.add(kind);
       void hl.el.offsetWidth;
       hl.el.classList.add('up');
-      hl.el.setAttribute('aria-label', kind === 'bug' ? 'bug, tócalo' : 'calo, no lo toques');
+      hl.el.setAttribute('aria-label', kind === 'bug' ? 'bug, tónitro' : 'nitro, no lo toques');
     }
 
     function whack(idx) {
@@ -113,20 +113,20 @@
         best = Math.max(best, combo);
         points += gain;
         hl.el.classList.add('hit');
-        ctx.after(220, function () { hl.el.classList.remove('hit', 'bug', 'ghost'); });
+        ctx.after(220, function () { hl.el.classList.remove('hit', 'bug', 'nitro'); });
         popText(hl, '+' + gain, 'var(--c3)');
         ctx.sfx('pop');
         ctx.vibrate(10);
       } else {
         combo = 0;
         points = Math.max(0, points - 20);
-        hl.el.classList.remove('bug', 'ghost');
+        hl.el.classList.remove('bug', 'nitro');
         hl.el.classList.add('bad');
         ctx.after(300, function () { hl.el.classList.remove('bad'); });
         popText(hl, '-20', 'var(--red)');
         ctx.sfx('bad');
         ctx.vibrate(60);
-        msg.textContent = 'ese era calo. no lo toques';
+        msg.textContent = 'ese era nitro. no lo toques';
       }
       hud();
     }
@@ -138,7 +138,7 @@
       var n = mode.multi > 1 && progress() > 0.35 && Math.random() < 0.4 ? 2 : 1;
       free = U.shuffle(free);
       for (var k = 0; k < n && k < free.length; k++) {
-        show(free[k], Math.random() < mode.decoy * (0.6 + progress()) ? 'ghost' : 'bug');
+        show(free[k], Math.random() < mode.decoy * (0.6 + progress()) ? 'nitro' : 'bug');
       }
     }
 
@@ -191,16 +191,16 @@
     name: 'Caza bugs',
     desc: 'Aplasta los bugs antes de que se escondan. 45 segundos.',
     tag: 'reflejos',
-    color: '#ff2c2c',
+    color: '#ff5a5f',
     unit: 'pts',
     icon: ['..#..#..', '...##...', '..####..', '.######.', '#.####.#', '..####..', '.#.##.#.', '#..##..#'],
-    how: 'Los bugs (rojos) salen de los agujeros: tócalos antes de que se escondan.\nNo toques a calo, el fantasma cian: resta puntos y rompe el combo.\nTeclas 1 a 9 funcionan como los agujeros.',
+    how: 'Los bugs (rojos) salen de los agujeros: tónitros antes de que se escondan.\nNo toques a Nitro, el erizo azul: resta puntos y rompe el combo.\nTeclas 1 a 9 funcionan como los agujeros.',
     start: function (ctx) {
       ctx.choose({
         title: '¿qué ritmo?',
         options: [
           { id: 'n', label: 'normal', desc: 'sube la velocidad poco a poco' },
-          { id: 'f', label: 'frenético', desc: 'más bugs, más calo, dobles' }
+          { id: 'f', label: 'frenético', desc: 'más bugs, más nitro, dobles' }
         ]
       }, function (id) { play(ctx, MODES[id]); });
     }

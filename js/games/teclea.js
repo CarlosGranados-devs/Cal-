@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var C = window.Calo;
+  var C = window.Nitro;
   var h = C.h;
   var U = C.util;
 
@@ -22,9 +22,9 @@
   var SECS = 30;
 
   function injectStyle() {
-    if (document.getElementById('calo-style-teclea')) return;
+    if (document.getElementById('nitro-style-teclea')) return;
     var s = document.createElement('style');
-    s.id = 'calo-style-teclea';
+    s.id = 'nitro-style-teclea';
     s.textContent =
       '.tcl-word{font-family:var(--pix,monospace);font-size:clamp(18px,6vw,28px);line-height:1.5;text-align:center;min-height:2.6em;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 6px;word-break:break-all;width:100%}' +
       '.tcl-ch{color:var(--dim);opacity:.6;white-space:pre}' +
